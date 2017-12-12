@@ -22,11 +22,6 @@
 #define SCK_SPY		5
 #define SS_SPY		2
 
-/**************************
- *	SPI speed 2X bit mask	
- **************************/
-#define CLK_2XMASK	0x01
-
 /******************************************************************
  *	SPI Initialization
  *	Sets pin direction for MOSI (out), SCK (out) and SS (out,high) 
@@ -70,6 +65,7 @@ uint8_t spi_shift(uint8_t spidata);
 /********************************************
  *	SPI De-initialize
  *	Disables SPI by clearing SPI enable bit
+ * and restoring HW pins to default state
  ********************************************/
 void spi_deinit();
 

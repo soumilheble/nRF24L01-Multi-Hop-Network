@@ -6,6 +6,11 @@
 
 #include <spyavr.h>
 
+/**************************
+ *	SPI speed 2X bit mask	
+ **************************/
+#define CLK_2XMASK	0x01
+
 void spi_init()
 {
 	SPIDDR |= (1<<SCK_SPY)|(1<<MOSI_SPY)|(1<<SS_SPY);	//SCK,MOSI and SS as Output
@@ -20,15 +25,16 @@ void spi_mode(uint8_t spymode)
   SPCR = (SPCR & 0xF3)|spymode;	//Set SPI Mode
 }
 
-// SPR1 SPR0 ~SPI2X Freq
-//   0    0     0   fosc/2
-//   0    0     1   fosc/4
-//   0    1     0   fosc/8
-//   0    1     1   fosc/16
-//   1    0     0   fosc/32
-//   1    0     1   fosc/64
-//   1    1     0   fosc/64
-//   1    1     1   fosc/128
+/* SPR1 SPR0 ~SPI2X Freq
+    0    0     0   fosc/2
+    0    0     1   fosc/4
+    0    1     0   fosc/8
+    0    1     1   fosc/16
+    1    0     0   fosc/32
+    1    0     1   fosc/64
+    1    1     0   fosc/64
+    1    1     1   fosc/128
+*/
 void spi_speed(uint8_t clkdiv)
 {
 	uint8_t dival=0;
@@ -53,7 +59,7 @@ void spi_dmode(uint8_t dato)
 uint8_t spi_shift(uint8_t spidata)
 {
 	SPDR = spidata;
-	asm volatile("nop");			//From Arduino SPI Library - If fast SPI, MCU does not have to wait much
+	asm volatile("nop");			//From Arduino SPI Library - If fast SPI, MCU does not have to wait much - Verify This ??
 	while (!(SPSR & (1<<SPIF)));	//Wait for SPI to complete data transfer
 	return SPDR;
 }
